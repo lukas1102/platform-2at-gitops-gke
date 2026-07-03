@@ -13,7 +13,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: bootstrap/gke
+        working-directory: bootstrap/
 
     steps:
       - name: Checkout code
