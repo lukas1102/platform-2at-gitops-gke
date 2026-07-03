@@ -1,0 +1,44 @@
+name: Validate IaC
+
+on:
+  pull_request:
+    paths:
+      - 'bootstrap/**'
+      - '.github/workflows/**'
+
+jobs:
+  validate:
+    name: Validate OpenTofu
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: bootstrap/
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: "1.12.0"
+
+      - name: Install tflint
+        run: |
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+
+      - name: Install tflint google plugin
+        run: tflint --init
+
+      - name: Check formatting
+        run: tofu fmt -check -recursive
+
+      - name: Lint
+        run: tflint
+
+      - name: Initialise (no backend)
+        run: tofu init -backend=false
+
+      - name: Validate syntax
+        run: tofu validate
