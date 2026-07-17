@@ -44,6 +44,6 @@ resource "google_container_node_pool" "node_pool" {
   }
 
   lifecycle {
-    ignore_changes = [ version ]
+    ignore_changes = [version]
   }
 }

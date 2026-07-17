@@ -17,7 +17,7 @@ locals {
     crossplane = {
       namespace = "crossplane-system"
       sa_name   = "crossplane"
-      members = ["crossplane-gcp", "provider-kubernetes"]
+      members   = ["crossplane-gcp", "provider-kubernetes"]
     }
   }
 }

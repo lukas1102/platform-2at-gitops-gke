@@ -32,7 +32,7 @@ resource "google_container_cluster" "cluster" {
   node_config {
     service_account = var.np_sa
     oauth_scopes    = ["https://www.googleapis.com/auth/cloud-platform"]
-    spot = true
+    spot            = true
   }
 
   network_policy {
