@@ -1,9 +1,11 @@
 module "gke" {
   source = "./modules/gke"
 
-  project_id  = var.gcp_project_id
-  name_prefix = var.gcp_name_prefix
-  np_sa       = module.iam.np_sa_email
+  project_id   = var.gcp_project_id
+  name_prefix  = var.gcp_name_prefix
+  np_sa        = module.iam.np_sa_email
+  cluster_name = var.cluster_name
+  region       = var.region
 }
 
 module "iam" {
@@ -20,4 +22,3 @@ module "dns" {
   name       = var.dns_name
   dns_name   = var.dns_zone
 }
-

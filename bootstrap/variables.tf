@@ -44,8 +44,3 @@ variable "dns_zone" {
 variable "cloudflare_api_token" {
   type = string
 }
-
-variable "cloudflare_zone_id" {
-  description = "Zone ID of the parent domain in Cloudflare"
-  type        = string
-}
