@@ -32,7 +32,7 @@ variable "bucket_prefix" {
 }
 
 variable "dns_name" {
-  type = string
+  type    = string
   default = "fhbglstudy"
 }
 
