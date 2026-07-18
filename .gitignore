@@ -41,3 +41,5 @@ terraform.rc
 
 gke.kubeconfig
 **/charts/*
+
+github-secret.yaml

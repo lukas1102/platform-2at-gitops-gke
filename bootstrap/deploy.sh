@@ -150,5 +150,61 @@ else
   warn "Skipping infrastructure provisioning."
 fi
 
+# ──────────────────────────────────────────────────────────────────────────────
+# Step 3 — Bootstrap ArgoCD on the GKE cluster.
+# ──────────────────────────────────────────────────────────────────────────────
+step "Step 3/3 — ArgoCD bootstrap"
+
+if ask "Did the previous step finish successfully and do you want to bootstrap ArgoCD now?"; then
+  KUBECONFIG_FILE="$SCRIPT_DIR/gke.kubeconfig"
+
+  # Generate ./gke.kubeconfig from the OpenTofu output if it isn't there yet.
+  if [[ ! -f "$KUBECONFIG_FILE" ]]; then
+    info "Fetching cluster credentials into $KUBECONFIG_FILE ..."
+    GKE_CMD="$("$TOFU_BIN" -chdir="$SCRIPT_DIR" output -raw gke)" \
+      || error "Could not read the 'gke' output. Did the apply step succeed?"
+    eval "$GKE_CMD" || error "Failed to fetch GKE credentials."
+  else
+    info "Reusing existing kubeconfig: $KUBECONFIG_FILE"
+  fi
+
+  # Create the argocd namespace (idempotent).
+  info "Creating 'argocd' namespace..."
+  kubectl create ns argocd --kubeconfig="$KUBECONFIG_FILE" \
+    --dry-run=client -o yaml | kubectl apply --kubeconfig="$KUBECONFIG_FILE" -f -
+
+  # Render and apply the ArgoCD bootstrap kustomization.
+  info "Deploying ArgoCD (kustomize build + server-side apply)..."
+  kubectl kustomize --enable-helm modules/argocd \
+    | kubectl apply --kubeconfig="$KUBECONFIG_FILE" --server-side -f -
+
+  info "Waiting for ArgoCD..."
+  kubectl --kubeconfig="$KUBECONFIG_FILE" wait --for=condition=available deployment/argocd-server -n argocd --timeout=120s
+
+  info "ArgoCD bootstrap finished."
+
+  info "Intitial ArgoCD admin password: "
+  kubectl --kubeconfig="$KUBECONFIG_FILE" -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+
+else
+  warn "Skipping ArgoCD bootstrap."
+fi
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Step 4 — Deploy root application
+# ──────────────────────────────────────────────────────────────────────────────
+
+if ask "Want to apply root application now?"; then
+  kubectl apply --kubeconfig="$KUBECONFIG_FILE" --server-side -f "$SCRIPT_DIR/modules/argocd/root-app.yaml"
+
+
+  if [[ -f  "$SCRIPT_DIR/gitlab-secret.yaml" ]]; then
+    info "Github secret found. Applying..."
+    kubectl apply --kubeconfig="$KUBECONFIG_FILE" --server-side -f "$SCRIPT_DIR/github-secret.yaml"
+  else
+    warn "no repo secret found!"
+  fi
+fi
+
 step "Done."
 info "Deployment workflow complete."
