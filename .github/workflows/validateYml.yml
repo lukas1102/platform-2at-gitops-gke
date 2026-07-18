@@ -37,7 +37,6 @@ jobs:
       # it first (catches overlay/patch errors) and then schema-checking the output.
       - name: Build & validate kustomize overlays
         run: |
-          set -e
           found=0
           while IFS= read -r dir; do
             found=1
@@ -57,7 +56,6 @@ jobs:
       # (e.g. raw ArgoCD Application objects, Crossplane Compositions/Claims).
       - name: Validate plain manifests
         run: |
-          set -e
           mapfile -t files < <(find . -type f \( -name '*.yaml' -o -name '*.yml' \) ! -name 'kustomization.yaml' ! -name 'values.yaml' ! -path './.github/*')
           if [ "${#files[@]}" -eq 0 ]; then
             echo "No plain manifests found, skipping."
