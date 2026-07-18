@@ -11,7 +11,7 @@ spec:
   description: "Cluster infrastructure: ArgoCD, cert-manager, ESO, ExternalDNS, Crossplane, cloudnative-pg"
 
   sourceRepos:
-    - "https://gitlab.com/luk1102/my-first-gitops-project.git"
+    - "https://github.com/lukas1102/platform-2at-gitops-gke.git"
     - "https://charts.jetstack.io"
     - "https://kubernetes-sigs.github.io/external-dns/"
     - "https://charts.external-secrets.io"
