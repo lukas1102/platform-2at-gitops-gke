@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/lukas1102/platform-2at-gitops-gke.git
     targetRevision: HEAD
-    path: apps
+    path: clusters/platform
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
