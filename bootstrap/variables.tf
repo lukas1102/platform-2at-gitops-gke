@@ -32,13 +32,11 @@ variable "bucket_prefix" {
 }
 
 variable "dns_name" {
-  type    = string
-  default = "fhbglstudy"
+  type = string
 }
 
 variable "dns_zone" {
-  type    = string
-  default = "example.com"
+  type = string
 }
 
 variable "cloudflare_api_token" {
