@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: gateway-system
+
+resources:
+  - gateway.yaml
+  - gatewayclass.yaml
+
+helmCharts:
+  - name: gateway-helm
+    repo: oci://docker.io/envoyproxy
+    releaseName: gateway-helm
+    version: 1.8.1
+    valuesFile: values.yaml
+    namespace: gateway-system

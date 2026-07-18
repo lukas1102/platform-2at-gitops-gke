@@ -1,0 +1,6 @@
+global:
+  crds:
+    enabled: false
+
+topologyInjector:
+  enabled: false
