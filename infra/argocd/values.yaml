@@ -16,9 +16,9 @@ configs:
     resource.exclustion: |
       - apiGroups:
         - "*.gcp.upbound.io"
-        kinds: 
+        kinds:
          - "*"
-        clusters: 
+        clusters:
          - "*"
 
 # RBAC: only admins can do anything; all others read-only
