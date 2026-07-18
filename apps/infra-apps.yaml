@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: infra
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions:
+    - missingkey=error
+  generators:
+    - list:
+        elements:
+          - name: gateway-api-crds
+            path: infra/envoy-gateway/crds
+            namespace: gateway-system
+            syncWave: "-10"
+          - name: gateway-api
+            path: infra/envoy-gateway
+            namespace: gateway-system
+            syncWave: "0"
+  template:
+    metadata:
+      name: "{{ .name }}"
+      namespace: argocd
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+      annotations:
+        argocd.argoproj.io/sync-wave: "{{ .syncWave }}"
+    spec:
+      project: infra
+      sources:
+        - repoURL: https://github.com/lukas1102/platform-2at-gitops-gke.git
+          targetRevision: HEAD
+          path: "{{ .path }}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ .namespace }}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
