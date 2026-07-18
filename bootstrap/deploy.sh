@@ -198,7 +198,7 @@ if ask "Want to apply root application now?"; then
   kubectl apply --kubeconfig="$KUBECONFIG_FILE" --server-side -f "$SCRIPT_DIR/modules/argocd/root-app.yaml"
 
 
-  if [[ -f  "$SCRIPT_DIR/gitlab-secret.yaml" ]]; then
+  if [[ -f  "$SCRIPT_DIR/github-secret.yaml" ]]; then
     info "Github secret found. Applying..."
     kubectl apply --kubeconfig="$KUBECONFIG_FILE" --server-side -f "$SCRIPT_DIR/github-secret.yaml"
   else
