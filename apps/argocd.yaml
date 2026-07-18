@@ -1,0 +1,56 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-13"
+spec:
+  project: infra
+  sources:
+    - repoURL: https://argoproj.github.io/argo-helm
+      chart: argo-cd
+      targetRevision: "10.1.4"  
+      helm:
+        valueFiles:
+          - $values/infra/argocd/values.yaml
+    - repoURL: https://github.com/lukas1102/platform-2at-gitops-gke.git
+      targetRevision: HEAD
+      ref: values
+    - repoURL: https://github.com/lukas1102/platform-2at-gitops-gke.git 
+      targetRevision: HEAD
+      path: infra/argocd/kustomize
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
+      - ServerSideApply=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-projects
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-14"
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/lukas1102/platform-2at-gitops-gke.git
+      targetRevision: HEAD
+      path: "infra/argocd/projects"
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
+      - ServerSideApply=true
