@@ -8,6 +8,7 @@ on:
       - 'infra/**/*.yaml'
       - 'tenants/**/*.yml'
       - 'tenants/**/*.yaml'
+      - '.github/workflows/**'
 
 jobs:
   validate:

@@ -10,14 +10,14 @@ spec:
   sources:
     - repoURL: https://argoproj.github.io/argo-helm
       chart: argo-cd
-      targetRevision: "10.1.4"  
+      targetRevision: "10.1.4"
       helm:
         valueFiles:
           - $values/infra/argocd/values.yaml
     - repoURL: https://github.com/lukas1102/platform-2at-gitops-gke.git
       targetRevision: HEAD
       ref: values
-    - repoURL: https://github.com/lukas1102/platform-2at-gitops-gke.git 
+    - repoURL: https://github.com/lukas1102/platform-2at-gitops-gke.git
       targetRevision: HEAD
       path: infra/argocd/kustomize
   destination:
