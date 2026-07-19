@@ -26,6 +26,10 @@ spec:
             path: infra/external-dns
             namespace: external-dns
             syncWave: "0"
+          - name: external-secrets
+            path: infra/external-secrets
+            namespace: external-secrets
+            syncWave: "0"
   template:
     metadata:
       name: "{{ .name }}"
