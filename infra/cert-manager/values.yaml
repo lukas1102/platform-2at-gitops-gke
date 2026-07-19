@@ -14,7 +14,7 @@ resources:
 
 webhook:
   serviceAccount:
-    annotations: 
+    annotations:
       iam.gke.io/gcp-service-account: inenp-cert-manager-sa@sacred-garden-501011-e0.iam.gserviceaccount.com
   resources:
     limits:
@@ -25,7 +25,7 @@ webhook:
 
 cainjector:
   serviceAccount:
-    annotations: 
+    annotations:
       iam.gke.io/gcp-service-account: inenp-cert-manager-sa@sacred-garden-501011-e0.iam.gserviceaccount.com
   resources:
     limits:
@@ -37,7 +37,7 @@ cainjector:
 serviceAccount:
   create: true
   name: cert-manager
-  annotations: 
+  annotations:
     iam.gke.io/gcp-service-account: inenp-cert-manager-sa@sacred-garden-501011-e0.iam.gserviceaccount.com
 global:
   leaderElection:
