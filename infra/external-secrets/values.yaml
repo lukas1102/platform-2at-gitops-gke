@@ -1,0 +1,23 @@
+installCRDs: true
+
+certController:
+  enabled: true
+  resources:
+    limits:
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 256Mi
+
+resources:
+  limits:
+    memory: 256Mi
+  requests:
+    cpu: 50m
+    memory: 256Mi
+
+serviceAccount:
+  create: true
+  name: external-secrets
+  annotations:
+    iam.gke.io/gcp-service-account: inenp-external-secrets-sa@sacred-garden-501011-e0.iam.gserviceaccount.com
