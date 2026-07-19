@@ -1,0 +1,44 @@
+installCRDs: true
+
+config:
+  apiVersion: controller.config.cert-manager.io/v1alpha1
+  enableGatewayAPI: true
+  kind: ControllerConfiguration
+
+resources:
+  limits:
+    memory: 256Mi
+  requests:
+    cpu: 50m
+    memory: 256Mi
+
+webhook:
+  serviceAccount:
+    annotations:
+      iam.gke.io/gcp-service-account: inenp-cert-manager-sa@sacred-garden-501011-e0.iam.gserviceaccount.com
+  resources:
+    limits:
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 256Mi
+
+cainjector:
+  serviceAccount:
+    annotations:
+      iam.gke.io/gcp-service-account: inenp-cert-manager-sa@sacred-garden-501011-e0.iam.gserviceaccount.com
+  resources:
+    limits:
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 256Mi
+
+serviceAccount:
+  create: true
+  name: cert-manager
+  annotations:
+    iam.gke.io/gcp-service-account: inenp-cert-manager-sa@sacred-garden-501011-e0.iam.gserviceaccount.com
+global:
+  leaderElection:
+    namespace: cert-manager

@@ -18,6 +18,10 @@ spec:
             path: infra/envoy-gateway
             namespace: gateway-system
             syncWave: "0"
+          - name: cert-manager
+            path: gitops/infra/cert-manager
+            namespace: cert-manager
+            syncWave: "-1"
   template:
     metadata:
       name: "{{ .name }}"

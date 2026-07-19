@@ -1,0 +1,19 @@
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: noreply@fhbgl.study
+    privateKeySecretRef:
+      name: acme-account-key
+    solvers:
+      - dns01:
+          cloudDNS:
+            hostedZoneName: fhbglstudy
+            project: sacred-garden-501011-e0
+        selector:
+          dnsZones:
+            - plateng.fhbgl.study
