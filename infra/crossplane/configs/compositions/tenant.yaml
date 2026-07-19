@@ -143,9 +143,9 @@ spec:
                             - port: 5432
                               protocol: TCP
                         - to:
-                          - namespaceSelector:
-                              matchLabels:
-                                kubernetes.io/metadata.name: cnpg-operator
+                            - namespaceSelector:
+                                matchLabels:
+                                  kubernetes.io/metadata.name: cnpg-operator
                       ingress:
                         - ports:
                             - port: 8000
@@ -182,12 +182,12 @@ spec:
                             - port: 53
                               protocol: UDP
                         - to:
-                          - namespaceSelector:
-                              matchLabels:
-                                kubernetes.io/metadata.name: kube-system
-                            podSelector:
-                              matchLabels:
-                                k8s-app: kube-dns
+                            - namespaceSelector:
+                                matchLabels:
+                                  kubernetes.io/metadata.name: kube-system
+                              podSelector:
+                                matchLabels:
+                                  k8s-app: kube-dns
                       ingress:
                         - ports:
                             - port: 8000
