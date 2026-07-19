@@ -38,6 +38,10 @@ spec:
             path: infra/crossplane/configs
             namespace: crossplane-system
             syncWave: "0"
+          - name: cnpg-operator
+            path: infra/cnpg-operator
+            namespace: cnpg-operator
+            syncWave: "-1"
   template:
     metadata:
       name: "{{ .name }}"
