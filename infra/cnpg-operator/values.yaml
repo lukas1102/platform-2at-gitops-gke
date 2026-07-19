@@ -1,18 +1,18 @@
 replicaCount: 1
- 
+
 config:
   clusterWide: true   # watch Cluster CRs in ALL namespaces (needed for per-tenant clusters)
 
 image:
   repository: ghcr.io/cloudnative-pg/cloudnative-pg
- 
+
 resources:
   requests:
     cpu: 100m
     memory: 200Mi
   limits:
     memory: 200Mi
- 
+
 monitoring:
   podMonitorEnabled: false
   grafanaDashboard:
