@@ -19,9 +19,13 @@ spec:
             namespace: gateway-system
             syncWave: "0"
           - name: cert-manager
-            path: gitops/infra/cert-manager
+            path: infra/cert-manager
             namespace: cert-manager
             syncWave: "-1"
+          - name: external-dns
+            path: infra/external-dns
+            namespace: external-dns
+            syncWave: "0"
   template:
     metadata:
       name: "{{ .name }}"
