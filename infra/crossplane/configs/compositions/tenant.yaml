@@ -1,0 +1,261 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: xtenants.platform.fhbgl.study
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  compositeTypeRef:
+    apiVersion: platform.fhbgl.study/v1alpha1
+    kind: XTenant
+  mode: Pipeline
+  pipeline:
+    # Ensure the namespace exists before the namespaced guardrails are applied.
+    - step: sequence
+      functionRef:
+        name: function-sequencer
+      input:
+        apiVersion: sequencer.fn.crossplane.io/v1beta1
+        kind: Input
+        rules:
+          - sequence:
+              - ns
+              - netpol-default-deny
+              - netpol-allow-dns
+              - quota
+    - step: patch-and-transform
+      functionRef:
+        name: function-patch-and-transform
+      input:
+        apiVersion: pt.fn.crossplane.io/v1beta1
+        kind: Resources
+        resources:
+          # --- 1. NAMESPACE (the tenant boundary) ---
+          - name: ns
+            base:
+              apiVersion: kubernetes.crossplane.io/v1alpha2
+              kind: Object
+              spec:
+                providerConfigRef:
+                  name: in-cluster
+                forProvider:
+                  manifest:
+                    apiVersion: v1
+                    kind: Namespace
+            patches:
+              - fromFieldPath: spec.parameters.tenantName
+                toFieldPath: spec.forProvider.manifest.metadata.name
+              - fromFieldPath: spec.parameters.tenantName
+                toFieldPath: spec.forProvider.manifest.metadata.labels["platform.fhbgl.study/tenant"]
+
+          # --- 2. NETWORK POLICY API Server ---
+
+          - name: netpol-allow-apiserver
+            base:
+              apiVersion: kubernetes.crossplane.io/v1alpha2
+              kind: Object
+              spec:
+                providerConfigRef:
+                  name: in-cluster
+                forProvider:
+                  manifest:
+                    apiVersion: networking.k8s.io/v1
+                    kind: NetworkPolicy
+                    metadata:
+                      name: allow-egress-apiserver
+                    spec:
+                      podSelector: {}
+                      policyTypes:
+                        - Egress
+                      egress:
+                        - ports:
+                            - port: 443
+                              protocol: TCP
+                            - port: 6443
+                              protocol: TCP
+            patches:
+              - fromFieldPath: spec.parameters.tenantName
+                toFieldPath: spec.forProvider.manifest.metadata.namespace
+
+          # --- 3. NETWORK POLICY Tenant isolation ---
+
+          - name: netpol-tenant-isolation
+            base:
+              apiVersion: kubernetes.crossplane.io/v1alpha2
+              kind: Object
+              spec:
+                providerConfigRef:
+                  name: in-cluster
+                forProvider:
+                  manifest:
+                    apiVersion: networking.k8s.io/v1
+                    kind: NetworkPolicy
+                    metadata:
+                      name: tenant-isolation
+                    spec:
+                      podSelector: {}
+                      policyTypes:
+                        - Ingress
+                        - Egress
+                      ingress:
+                        - from:
+                            - podSelector: {}   # same-namespace only
+                      egress:
+                        - to:
+                            - podSelector: {}   # same-namespace
+                        - to:
+                            - ipBlock:
+                                cidr: 0.0.0.0/0
+                                except:
+                                  - 10.10.0.0/18
+            patches:
+              - fromFieldPath: spec.parameters.tenantName
+                toFieldPath: spec.forProvider.manifest.metadata.namespace
+
+          # --- 4. NETWORK POLICY cnpg operator ---
+
+          - name: netpol-allow-cnpg-operator
+            base:
+              apiVersion: kubernetes.crossplane.io/v1alpha2
+              kind: Object
+              spec:
+                providerConfigRef:
+                  name: in-cluster
+                forProvider:
+                  manifest:
+                    apiVersion: networking.k8s.io/v1
+                    kind: NetworkPolicy
+                    metadata:
+                      name: allow-cnpg-operator
+                    spec:
+                      podSelector:
+                        matchLabels:
+                          cnpg.io/cluster: cluster
+                      policyTypes:
+                        - Egress
+                        - Ingress
+                      egress:
+                        - ports:
+                            - port: 8000
+                              protocol: TCP
+                            - port: 5432
+                              protocol: TCP
+                        - to:
+                            - namespaceSelector:
+                                matchLabels:
+                                  kubernetes.io/metadata.name: cnpg-operator
+                      ingress:
+                        - ports:
+                            - port: 8000
+                              protocol: TCP
+                            - port: 5432
+                              protocol: TCP
+            patches:
+              - fromFieldPath: spec.parameters.tenantName
+                toFieldPath: spec.forProvider.manifest.metadata.namespace
+
+          # --- 5. Network policy DNS ---
+
+          - name: netpol-allow-kube-dns
+            base:
+              apiVersion: kubernetes.crossplane.io/v1alpha2
+              kind: Object
+              spec:
+                providerConfigRef:
+                  name: in-cluster
+                forProvider:
+                  manifest:
+                    apiVersion: networking.k8s.io/v1
+                    kind: NetworkPolicy
+                    metadata:
+                      name: allow-kube-dns
+                    spec:
+                      podSelector: {}
+                      policyTypes:
+                        - Egress
+                      egress:
+                        - ports:
+                            - port: 53
+                              protocol: TCP
+                            - port: 53
+                              protocol: UDP
+                        - to:
+                            - namespaceSelector:
+                                matchLabels:
+                                  kubernetes.io/metadata.name: kube-system
+                              podSelector:
+                                matchLabels:
+                                  k8s-app: kube-dns
+                      ingress:
+                        - ports:
+                            - port: 8000
+                              protocol: TCP
+                            - port: 5432
+                              protocol: TCP
+            patches:
+              - fromFieldPath: spec.parameters.tenantName
+                toFieldPath: spec.forProvider.manifest.metadata.namespace
+
+          # --- 6. RESOURCE QUOTA ---
+          - name: quota
+            base:
+              apiVersion: kubernetes.crossplane.io/v1alpha2
+              kind: Object
+              spec:
+                providerConfigRef:
+                  name: in-cluster
+                forProvider:
+                  manifest:
+                    apiVersion: v1
+                    kind: ResourceQuota
+                    metadata:
+                      name: tenant-quota
+                    spec:
+                      hard:
+                        limits.cpu: "4"
+                        limits.memory: "8Gi"
+                        pods: "20"
+            patches:
+              - fromFieldPath: spec.parameters.tenantName
+                toFieldPath: spec.forProvider.manifest.metadata.namespace
+              - fromFieldPath: spec.parameters.cpuQuota
+                toFieldPath: spec.forProvider.manifest.spec.hard["limits.cpu"]
+                policy:
+                  fromFieldPath: Optional
+              - fromFieldPath: spec.parameters.memoryQuota
+                toFieldPath: spec.forProvider.manifest.spec.hard["limits.memory"]
+                policy:
+                  fromFieldPath: Optional
+              - fromFieldPath: spec.parameters.podsQuota
+                toFieldPath: spec.forProvider.manifest.spec.hard["pods"]
+                policy:
+                  fromFieldPath: Optional
+
+          # --- 7. RESOURCE LIMIT RANGE ---
+          - name: limit-ranges-containers
+            base:
+              apiVersion: kubernetes.crossplane.io/v1alpha2
+              kind: Object
+              spec:
+                providerConfigRef:
+                  name: in-cluster
+                forProvider:
+                  manifest:
+                    apiVersion: v1
+                    kind: LimitRange
+                    metadata:
+                      name: default-limits
+                    spec:
+                      limits:
+                        - type: Container
+                          default:
+                            cpu: "500m"
+                            memory: "512Mi"
+                          defaultRequest:
+                            cpu: "100m"
+                            memory: "128Mi"
+            patches:
+              - fromFieldPath: spec.parameters.tenantName
+                toFieldPath: spec.forProvider.manifest.metadata.namespace

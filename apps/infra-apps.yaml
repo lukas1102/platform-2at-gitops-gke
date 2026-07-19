@@ -30,6 +30,14 @@ spec:
             path: infra/external-secrets
             namespace: external-secrets
             syncWave: "0"
+          - name: crossplane
+            path: infra/crossplane
+            namespace: crossplane-system
+            syncWave: "-1"
+          - name: crossplane-configs
+            path: infra/crossplane/configs
+            namespace: crossplane-system
+            syncWave: "0"
   template:
     metadata:
       name: "{{ .name }}"
