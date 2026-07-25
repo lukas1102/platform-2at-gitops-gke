@@ -14,3 +14,4 @@ helmCharts:
     version: 1.8.1
     valuesFile: values.yaml
     namespace: gateway-system
+    includeCRDs: false
