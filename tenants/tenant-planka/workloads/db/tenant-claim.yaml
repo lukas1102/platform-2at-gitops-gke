@@ -1,0 +1,9 @@
+---
+# 1. Tenant guardrails: namespace + quotas + NetworkPolicies
+apiVersion: platform.fhbgl.study/v1alpha1
+kind: XTenant
+metadata:
+  name: crossplane-system
+spec:
+  parameters:
+    tenantName: tenant-planka

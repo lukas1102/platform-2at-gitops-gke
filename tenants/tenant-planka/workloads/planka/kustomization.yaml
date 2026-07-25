@@ -1,0 +1,14 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - tenant-claim.yaml
+
+helmCharts:
+  - name: planka
+    repo: http://plankanban.github.io/planka
+    version: 2.1.0
+    releaseName: planka
+    valuesFile: values.yaml
+    namespace: tenant-planka

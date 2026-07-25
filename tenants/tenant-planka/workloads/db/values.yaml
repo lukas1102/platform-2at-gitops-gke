@@ -1,0 +1,23 @@
+type: postgresql
+mode: standalone
+
+cluster:
+  instances: 1
+
+  storage:
+    size: 10Gi
+    storageClass: ""
+
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      memory: 512Mi
+ 
+  postgresql:
+    parameters:
+      max_connections: "200"
+
+backups:
+  enabled: false

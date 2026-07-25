@@ -1,0 +1,15 @@
+existingSecretkeySecret: "secret"
+
+existingAdminCredsSecret: "secret-admin"
+
+admin_email: "demo@demo.demo"
+admin_name: "app"
+# Admin user
+
+postgresql:
+  enabled: false
+
+existingDburlSecret: "secret-dburl"
+
+ingress:
+  enabled: false
