@@ -32,7 +32,7 @@ spec:
     - server: https://kubernetes.default.svc
       namespace: argocd
     - server: https://kubernetes.default.svc
-      namespace: gateway-system
+      namespace: envoy-gateway-system
     - server: https://kubernetes.default.svc
       namespace: cnpg-operator
 
