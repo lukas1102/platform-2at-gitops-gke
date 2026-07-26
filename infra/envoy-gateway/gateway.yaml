@@ -28,4 +28,4 @@ spec:
         certificateRefs:
           - group: ""
             kind: Secret
-            name: envoy-gateway
+            name: wildcard-cert-envoy-gateway-1
