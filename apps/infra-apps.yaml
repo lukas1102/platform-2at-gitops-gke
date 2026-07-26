@@ -12,11 +12,11 @@ spec:
         elements:
           - name: gateway-api-crds
             path: infra/envoy-gateway/crds
-            namespace: gateway-system
+            namespace: envoy-gateway-system
             syncWave: "-10"
           - name: gateway-api
             path: infra/envoy-gateway
-            namespace: gateway-system
+            namespace: envoy-gateway-system
             syncWave: "0"
           - name: cert-manager
             path: infra/cert-manager
