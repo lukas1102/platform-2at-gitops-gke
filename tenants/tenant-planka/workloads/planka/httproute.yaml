@@ -1,0 +1,52 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    external-dns.alpha.kubernetes.io/provider: public
+  name: planka-https
+  namespace: tenant-planka
+spec:
+  hostnames:
+    - planka.plateng.fhbgl.study
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: external-gateway
+      namespace: gateway-system
+      sectionName: https
+  rules:
+    - backendRefs:
+        - group: ''
+          kind: Service
+          name: planka
+          port: 1337
+          weight: 1
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: planka-http-redirect
+  namespace: tenant-planka
+spec:
+  hostnames:
+    - planka.plateng.fhbgl.study
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: external-gateway
+      namespace: gateway-system
+      sectionName: http
+  rules:
+    - filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+            statusCode: 301
+      matches:
+        - path:
+            type: PathPrefix
+            value: /

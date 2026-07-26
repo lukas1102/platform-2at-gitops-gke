@@ -1,0 +1,49 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tenant-planka-db
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "21"
+spec:
+  project: tenants
+  source:
+    repoURL: https://github.com/lukas1102/platform-2at-gitops-gke.git
+    targetRevision: HEAD
+    path: tenants/tenant-planka/workloads/db
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tenant-planka
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tenant-planka-app
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "23"
+spec:
+  project: tenants
+  source:
+    repoURL: https://github.com/lukas1102/platform-2at-gitops-gke.git
+    targetRevision: HEAD
+    path: tenants/tenant-planka/workloads/planka
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tenant-planka
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
