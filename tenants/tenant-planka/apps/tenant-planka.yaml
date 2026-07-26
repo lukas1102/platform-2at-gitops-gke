@@ -1,11 +1,10 @@
-
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: tenant-planka-db
   namespace: argocd
   finalizers:
-      - resources-finalizer.argocd.argoproj.io
+    - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd.argoproj.io/sync-wave: "21"
 spec:
@@ -30,7 +29,7 @@ metadata:
   name: tenant-planka-app
   namespace: argocd
   finalizers:
-      - resources-finalizer.argocd.argoproj.io
+    - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd.argoproj.io/sync-wave: "23"
 spec:

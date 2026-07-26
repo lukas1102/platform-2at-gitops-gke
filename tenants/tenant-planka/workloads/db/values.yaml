@@ -14,7 +14,7 @@ cluster:
       memory: 512Mi
     limits:
       memory: 512Mi
- 
+
   postgresql:
     parameters:
       max_connections: "200"
