@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - argocd.yaml
   - infra-apps.yaml
+  - argocd.yaml
