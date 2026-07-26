@@ -4,6 +4,7 @@ kind: Kustomization
 
 resources:
   - external-secret.yaml
+  - httproute.yaml
 
 helmCharts:
   - name: planka

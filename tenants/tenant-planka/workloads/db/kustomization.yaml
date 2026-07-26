@@ -9,7 +9,7 @@ resources:
 helmCharts:
   - name: cluster
     repo: https://cloudnative-pg.github.io/charts
-    version: 0.7.0
+    version: 0.8.1
     releaseName: cluster
     valuesFile: values.yaml
     namespace: tenant-planka

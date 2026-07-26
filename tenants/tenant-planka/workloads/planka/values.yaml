@@ -6,6 +6,8 @@ admin_email: "demo@demo.demo"
 admin_name: "app"
 # Admin user
 
+baseUrl: "planka.plateng.fhbgl.study"
+
 postgresql:
   enabled: false
 
