@@ -69,7 +69,7 @@ resource "google_project_iam_member" "cert_manager_dns_admin" {
 
 resource "google_project_iam_member" "eso_secretsmanager" {
   project = var.project_id
-  role    = "roles/secretmanager.secretAccessor"
+  role    = "roles/secretmanager.admin"
   member  = "serviceAccount:${google_service_account.eso.email}"
 }
 
@@ -79,7 +79,7 @@ resource "google_project_iam_member" "crossplane" {
     "roles/compute.editor",
     "roles/container.editor",
     "roles/iam.workloadIdentityPoolAdmin",
-    "roles/secretmanager.secretAccessor",
+    "roles/secretmanager.admin",
   ])
 
   project = var.project_id
