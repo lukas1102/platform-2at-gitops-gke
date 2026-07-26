@@ -1,0 +1,13 @@
+gateway-helm:
+  crds:
+    enabled: false
+
+gateway:
+  name: external-gateway
+  className: external-gateway-class
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+  hostname: "*.plateng.fhbgl.study"
+  clusterIssuer: letsencrypt-prod
+  externalDnsProvider: public
+  tls:
+    secretName: wildcard-crypto-haven-tls
