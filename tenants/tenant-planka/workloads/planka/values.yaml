@@ -15,3 +15,7 @@ existingDburlSecret: "secret-dburl"
 
 ingress:
   enabled: false
+
+service:
+  port: 80
+  containerPort: 80
