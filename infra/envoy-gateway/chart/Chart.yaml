@@ -1,8 +1,0 @@
-apiVersion: v2
-name: envoy-gateway
-description: >-
-  Umbrella chart for the Envoy Gateway control plane (vendored gateway-helm
-  subchart under charts/) together with the external Gateway and GatewayClass.
-type: application
-version: 0.1.0
-appVersion: "1.7.5"
