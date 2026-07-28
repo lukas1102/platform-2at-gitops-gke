@@ -43,7 +43,7 @@ server:
       - group: gateway.networking.k8s.io
         kind: Gateway
         name: external-gateway
-        namespace: gateway-system
+        namespace: envoy-gateway-system
         sectionName: https
   replicas: 3
   resources:
