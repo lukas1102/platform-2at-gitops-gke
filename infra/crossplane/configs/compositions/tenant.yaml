@@ -102,6 +102,10 @@ spec:
                       ingress:
                         - from:
                             - podSelector: {}   # same-namespace only
+                        - from:
+                            - namespaceSelector:
+                                matchLabels:
+                                  kubernetes.io/metadata.name: envoy-gateway-system
                       egress:
                         - to:
                             - podSelector: {}   # same-namespace
