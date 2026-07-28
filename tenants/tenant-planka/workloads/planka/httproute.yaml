@@ -19,7 +19,7 @@ spec:
         - group: ''
           kind: Service
           name: planka
-          port: 80
+          port: 1337
           weight: 1
       matches:
         - path:
